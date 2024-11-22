@@ -1,0 +1,70 @@
+name: Security Analysis
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  test-and-analyze:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout du code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # 2. Configurer Python
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      # 3. Vérification des fichiers nécessaires
+      - name: Check for requirements.txt
+        run: |
+          if [ ! -f requirements.txt ]; then echo "requirements.txt not found!"; exit 1; fi
+
+      # 4. Installer les dépendances
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      # 5. Analyse avec PyRaider
+      - name: Run PyRaider
+        run: |
+          pip install pyraider
+          pyraider scan --requirements requirements.txt --output pyraider_report.json
+        continue-on-error: true
+
+      # 6. Enregistrer le rapport PyRaider
+      - name: Upload PyRaider Report
+        uses: actions/upload-artifact@v2
+        with:
+          name: PyRaider Report
+          path: pyraider_report.json
+
+      # 7. Installer Snyk CLI
+      - name: Install Snyk CLI
+        run: npm install -g snyk
+
+      # 8. Authentification avec Snyk
+      - name: Authenticate with Snyk
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: snyk auth $SNYK_TOKEN
+
+      # 9. Analyse avec Snyk
+      - name: Run Snyk Security Analysis
+        run: snyk test --json-file-output=snyk_report.json
+
+      # 10. Enregistrer le rapport Snyk
+      - name: Upload Snyk Report
+        uses: actions/upload-artifact@v2
+        with:
+          name: Snyk Report
+          path: snyk_report.json
