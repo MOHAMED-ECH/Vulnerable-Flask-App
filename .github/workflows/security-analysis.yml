@@ -1,0 +1,51 @@
+name: Security Analysis
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  test-and-analyze:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout du code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # 2. Configurer Python
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      # 3. Installer les dépendances
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      # 4. Analyse avec PyRaider
+      - name: Run PyRaider
+        run: |
+          pip install pyraider
+          pyraider scan --requirements requirements.txt
+
+      # 5. Installer Snyk
+      - name: Install Snyk CLI
+        run: |
+          npm install -g snyk
+
+      # 6. Authentification avec Snyk
+      - name: Authenticate with Snyk
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: snyk auth $SNYK_TOKEN
+
+      # 7. Analyse avec Snyk
+      - name: Run Snyk Security Analysis
+        run: snyk test
