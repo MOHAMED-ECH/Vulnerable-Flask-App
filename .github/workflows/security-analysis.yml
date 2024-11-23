@@ -24,12 +24,9 @@ jobs:
         with:
           python-version: 3.8
 
-      # 3. Vérifier les dépendances (debug)
+      # 3. Debug requirements file
       - name: Debug requirements file
-        run: |
-          echo "Debugging requirements file..."
-          ls -l requirements.txt
-          cat requirements.txt
+        run: cat requirements.txt
 
       # 4. Installer les dépendances
       - name: Install dependencies
@@ -40,19 +37,26 @@ jobs:
       - name: Run PyRaider
         run: |
           pip install pyraider
-          pyraider scan --requirements requirements.txt || echo "PyRaider failed"
+          pyraider check -f requirements.txt -e html pyraider-report.html -s high
 
-      # 6. Installer Snyk
+      # 6. Collecter le rapport de PyRaider
+      - name: Upload PyRaider Report
+        uses: actions/upload-artifact@v2
+        with:
+          name: pyraider-report
+          path: pyraider-report.html
+
+      # 7. Installer Snyk
       - name: Install Snyk CLI
         run: |
           npm install -g snyk
 
-      # 7. Authentification avec Snyk
+      # 8. Authentification avec Snyk
       - name: Authenticate with Snyk
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         run: snyk auth $SNYK_TOKEN
 
-      # 8. Analyse avec Snyk
+      # 9. Analyse avec Snyk
       - name: Run Snyk Security Analysis
         run: snyk test
