@@ -41,7 +41,7 @@ jobs:
 
       # 6. Collecter le rapport de PyRaider
       - name: Upload PyRaider Report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: pyraider-report
           path: pyraider-report.html
