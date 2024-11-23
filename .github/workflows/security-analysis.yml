@@ -16,11 +16,11 @@ jobs:
     steps:
       # 1. Checkout du code
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       # 2. Configurer Python
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: 3.8
 
@@ -28,6 +28,8 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
+          echo "DEBUG: Listing installed packages..."
+          pip freeze
 
       # 4. Analyse avec PyRaider
       - name: Run PyRaider
