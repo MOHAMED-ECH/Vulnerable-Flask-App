@@ -2,6 +2,6 @@ Flask==2.0.3             # Un framework web léger pour Python
 flask-wtf==1.0.1         # Une extension Flask pour gérer les formulaires avec WTF Forms
 wtforms==3.0.1           # Une bibliothèque pour la gestion des formulaires dans les applications web
 sqlalchemy==1.4.36       # Un ORM (Object-Relational Mapper) pour interagir avec des bases de données
-jinja2==3.0.3            # Un moteur de template utilisé par Flask pour générer des pages HTML
+jinja2==3.1.6            # Un moteur de template utilisé par Flask pour générer des pages HTML
 Werkzeug==2.0.3          # Une bibliothèque qui fournit des outils WSGI pour les applications web
 itsdangerous==2.0.1      # Une bibliothèque pour signer des données de manière sécurisée
